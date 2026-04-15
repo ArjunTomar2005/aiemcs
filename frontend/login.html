@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AIEMCS — Login</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .tab-bar { display:flex; gap:0; margin-bottom:1.5rem; border-bottom:2px solid var(--border); }
+    .tab-btn { flex:1; background:none; border:none; padding:0.75rem; cursor:pointer;
+               font-size:0.9rem; font-weight:500; color:var(--text-muted);
+               border-bottom:2px solid transparent; margin-bottom:-2px; transition:var(--transition); }
+    .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .hero-note { background:var(--surface2); border-radius:var(--radius-sm); padding:0.75rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+  <div class="login-box">
+
+    <div class="login-logo">
+      <h1>🏛️ AIEMCS</h1>
+      <p>AI Powered Equipment Monitoring &amp; Control System</p>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('user')">User / Student</button>
+      <button class="tab-btn"       onclick="switchTab('admin')">Lab Incharge</button>
+    </div>
+
+    <!-- USER tab: go directly to chatbot -->
+    <div id="tab-user" class="tab-panel active">
+      <div class="hero-note">
+        🤖 No login required. Ask the AI chatbot for equipment availability directly.
+      </div>
+      <a href="chatbot.html" class="btn btn-primary w-full" style="justify-content:center;">
+        Open Equipment Chatbot →
+      </a>
+    </div>
+
+    <!-- ADMIN tab: login form -->
+    <div id="tab-admin" class="tab-panel">
+      <div id="login-alert" class="alert alert-error hidden"></div>
+
+      <form id="login-form" autocomplete="on">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="incharge@university.edu" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-full" id="login-btn" style="justify-content:center;margin-top:0.5rem;">
+          Sign In
+        </button>
+      </form>
+
+      <p class="text-sm text-muted mt-2" style="text-align:center;">
+        Default demo password: <strong>incharge@123</strong>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000';
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (tab==='user'&&i===0)||(tab==='admin'&&i===1)));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn   = document.getElementById('login-btn');
+    const alert = document.getElementById('login-alert');
+    alert.classList.add('hidden');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Signing in…';
+
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          email:    document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert.textContent = data.detail || 'Login failed.';
+        alert.classList.remove('hidden');
+      } else {
+        localStorage.setItem('aiemcs_token', data.access_token);
+        localStorage.setItem('aiemcs_user',  JSON.stringify({id:data.incharge_id, name:data.name, role:data.role}));
+        window.location.href = 'lab_panel.html';
+      }
+    } catch(err) {
+      alert.textContent = 'Cannot reach server. Is the backend running?';
+      alert.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  });
+</script>
+</body>
+</html>

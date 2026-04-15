@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AIEMCS — Equipment Chatbot</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    🏛️ <span>AIEMCS</span> &nbsp;Equipment Chatbot
+  </div>
+  <div class="navbar-links">
+    <a href="login.html">Lab Incharge Login</a>
+  </div>
+</nav>
+
+<!-- Chat layout -->
+<div class="chat-layout">
+
+  <!-- Sidebar: suggestions -->
+  <aside class="chat-sidebar">
+    <h3>Try asking…</h3>
+
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      Is there a laptop in Block E on Monday 10–11?
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      Find a CNC machine in Block A
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      I need an MRI machine in Block H
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      Any i7 desktop available on Tuesday?
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      Show centrifuge available in science block
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      I need a sewing machine in Block E today
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      Camera available in D block on Friday afternoon?
+    </div>
+    <div class="suggestion-chip" onclick="sendSuggestion(this)">
+      What robotic arms are available?
+    </div>
+
+    <h3 style="margin-top:1.5rem;">Blocks</h3>
+    <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.8;">
+      🏫 A–E: Academic (300 rooms each)<br/>
+      🏥 H: Hospital (500 rooms)
+    </div>
+  </aside>
+
+  <!-- Main chat area -->
+  <div class="chat-main">
+    <div class="chat-messages" id="messages">
+      <!-- Welcome message -->
+      <div class="message bot">
+        <div class="message-bubble">
+          👋 Hello! I'm the <strong>AIEMCS Equipment Assistant</strong>.<br/><br/>
+          Ask me about equipment availability across any block. You can specify:<br/>
+          • Equipment type (laptop, MRI, CNC…)<br/>
+          • Block &amp; room (Block E, A_101…)<br/>
+          • Day &amp; time slot<br/>
+          • Specifications (i7, 16GB RAM…)
+        </div>
+        <span class="message-time">Now</span>
+      </div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="chat-input-bar">
+      <input
+        type="text"
+        id="chat-input"
+        placeholder="Ask about equipment availability…"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter')sendMessage()"
+      />
+      <button class="btn btn-primary" onclick="sendMessage()" id="send-btn">
+        Send
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="chat.js"></script>
+</body>
+</html>
